@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMR Hands-on Terminal Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-code: #f6f8fa;
+    --bg-code-dark: #161b22;
+    --border: #d0d7de;
+    --border-light: #e8eaed;
+    --text: #1f2328;
+    --text-muted: #656d76;
+    --text-code: #24292f;
+    --link: #0969da;
+    --green: #1a7f37;
+    --green-bg: #dafbe1;
+    --green-bar: #2da44e;
+    --orange: #9a6700;
+    --orange-bg: #fff8c5;
+    --orange-border: #d4a72c;
+    --red: #cf222e;
+    --red-bg: #fff5f5;
+    --blue-bg: #ddf4ff;
+    --blue-border: #54aeff;
+    --blue-text: #0969da;
+    --radius: 6px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --progress-color: #2da44e;
+    --shadow: 0 1px 3px rgba(31,35,40,0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-code: #161b22;
+      --border: #30363d;
+      --border-light: #21262d;
+      --text: #e6edf3;
+      --text-muted: #7d8590;
+      --text-code: #e6edf3;
+      --link: #58a6ff;
+      --green: #3fb950;
+      --green-bg: #0d4429;
+      --green-bar: #3fb950;
+      --orange: #e3b341;
+      --orange-bg: #272115;
+      --orange-border: #bb8009;
+      --red: #f85149;
+      --red-bg: #2d0b0b;
+      --blue-bg: #0c2d6b;
+      --blue-border: #1f6feb;
+      --blue-text: #58a6ff;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ── Typography ── */
+  h1 { font-size: 28px; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  h2 { font-size: 20px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin: 28px 0 14px; }
+  h3 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; }
+  h4 { font-size: 14px; font-weight: 600; margin: 14px 0 8px; }
+  p  { margin-bottom: 10px; }
+  a  { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { padding-left: 24px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* ── Blockquote ── */
+  blockquote {
+    border-left: 4px solid var(--border);
+    padding: 4px 16px;
+    color: var(--text-muted);
+    margin: 12px 0;
+  }
+
+  /* ── Inline code ── */
+  code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  /* ── Tables ── */
+  table { border-collapse: collapse; width: 100%; margin-bottom: 14px; font-size: 14px; }
+  th { background: var(--bg-secondary); font-weight: 600; text-align: left; }
+  th, td { border: 1px solid var(--border); padding: 7px 12px; }
+  tr:nth-child(even) td { background: var(--bg-secondary); }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .callout.warn  { background: var(--orange-bg); border: 1px solid var(--orange-border); color: var(--orange); }
+  .callout.info  { background: var(--blue-bg);   border: 1px solid var(--blue-border);   color: var(--blue-text); }
+  .callout.note  { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-muted); }
+
+  /* ── Progress Bar ── */
+  #progress-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0 10px;
+    margin-bottom: 4px;
+  }
+  #progress-sticky .inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #progress-label { font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--text-muted); min-width: 110px; }
+  #progress-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  #progress-fill {
+    height: 8px;
+    background: var(--progress-color);
+    border-radius: 20px;
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  #progress-pct { font-size: 13px; font-weight: 600; color: var(--green); min-width: 36px; text-align: right; }
+  #reset-btn {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 3px 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #reset-btn:hover { background: var(--bg-secondary); }
+
+  /* ── Checklist items ── */
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checklist-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin-top: 3px;
+    accent-color: var(--green-bar);
+    cursor: pointer;
+  }
+  .checklist-item .check-label {
+    font-size: 14px;
+    line-height: 1.5;
+    transition: color 0.15s;
+  }
+  .checklist-item.checked .check-label {
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  /* ── Code blocks ── */
+  .code-wrap {
+    position: relative;
+    margin: 10px 0 14px;
+  }
+  pre {
+    background: var(--bg-code-dark);
+    color: #e6edf3;
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    border: 1px solid #30363d;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: var(--font);
+    background: rgba(255,255,255,0.08);
+    color: #8b949e;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); color: #e6edf3; }
+  .copy-btn.copied { background: rgba(45,164,78,0.25); border-color: #2da44e; color: #3fb950; }
+
+  /* ── Collapsible sections ── */
+  .collapsible {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 14px 0;
+    overflow: hidden;
+  }
+  .collapsible-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    cursor: pointer;
+    user-select: none;
+    gap: 10px;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font);
+    color: var(--text);
+  }
+  .collapsible-header:hover { background: var(--border-light); }
+  .collapsible-title {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .collapsible-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .collapsible.open .chevron { transform: rotate(180deg); }
+  .collapsible-body {
+    display: none;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .collapsible.open .collapsible-body { display: block; }
+
+  /* ── Checklist group inside collapsible ── */
+  .step-group {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+  .step-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .toc-title { font-weight: 600; margin-bottom: 8px; }
+  .toc ul { margin-bottom: 0; }
+  .toc li { margin-bottom: 2px; }
+  .toc a { color: var(--link); }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-right: 4px;
+  }
+  .tag-green  { background: var(--green-bg); color: var(--green); }
+  .tag-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+  .tag-blue   { background: var(--blue-bg); color: var(--blue-text); }
+
+  /* ── Header block ── */
+  .doc-header {
+    margin-bottom: 20px;
+  }
+  .doc-header .meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .doc-header .meta span { display: flex; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ── Sticky progress bar ── -->
+<div id="progress-sticky">
+  <div class="inner">
+    <span id="progress-label">Progress</span>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+    <span id="progress-pct">0%</span>
+    <button id="reset-btn" onclick="resetProgress()">Reset</button>
+  </div>
+</div>
+
+<!-- ── Header ── -->
+<div class="doc-header">
+  <h1>🧬 AMR Genomic Analysis — Terminal Guide</h1>
+  <div class="meta">
+    <span>📅 February 6, 2026</span>
+    <span>👩‍🏫 Instructor: Anwesha</span>
+    <span>⏱ 75 minutes</span>
+  </div>
+  <div style="margin-top:10px">
+    <span class="tag tag-green">AMRFinderPlus</span>
+    <span class="tag tag-blue">CARD RGI</span>
+    <span class="tag tag-orange">ABRicate</span>
+    <span class="tag tag-green">K. pneumoniae</span>
+  </div>
+  <blockquote style="margin-top:12px">
+    Hands-on terminal workflow for AMR detection using four tools and two <em>K. pneumoniae</em> isolates. No cloud environment required.
+  </blockquote>
+</div>
+
+<!-- ── TOC ── -->
+<div class="toc">
+  <div class="toc-title">📖 Table of Contents</div>
+  <ul>
+    <li><a href="#overview">Session Overview &amp; Datasets</a></li>
+    <li><a href="#prereqs">Prerequisites</a></li>
+    <li><a href="#part1">Part 1 — Environment Setup</a></li>
+    <li><a href="#part2">Part 2 — Download Genomes</a></li>
+    <li><a href="#ex1">Exercise 1 — AMRFinderPlus</a></li>
+    <li><a href="#ex2">Exercise 2 — CARD RGI</a></li>
+    <li><a href="#ex3">Exercise 3 — ABRicate</a></li>
+    <li><a href="#ex4">Exercise 4 — Comparative Analysis</a></li>
+    <li><a href="#export">Export Results</a></li>
+    <li><a href="#discussion">Discussion Questions</a></li>
+    <li><a href="#extras">Additional Exercises</a></li>
+    <li><a href="#bestpractices">Best Practices</a></li>
+    <li><a href="#resources">Resources &amp; Publications</a></li>
+  </ul>
+</div>
+
+<!-- ── Overview ── -->
+<h2 id="overview">📋 Session Overview</h2>
+<table>
+  <thead><tr><th>Tool</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><strong>AMRFinderPlus</strong></td><td>NCBI's comprehensive AMR detection tool</td></tr>
+    <tr><td><strong>RGI (CARD)</strong></td><td>Resistance Gene Identifier from the CARD database</td></tr>
+    <tr><td><strong>ABRicate</strong></td><td>Multi-database screening tool</td></tr>
+    <tr><td><strong>Comparative Analysis</strong></td><td>Cross-validation across all tools</td></tr>
+  </tbody>
+</table>
+
+<h3>📊 Sample Datasets</h3>
+<p>Two <em>Klebsiella pneumoniae</em> isolates will be analyzed:</p>
+<table>
+  <thead><tr><th>Isolate</th><th>Accession</th><th>Strain</th></tr></thead>
+  <tbody>
+    <tr><td>Isolate 1</td><td><code>GCF_051414815.1</code></td><td>K. pneumoniae MVS2</td></tr>
+    <tr><td>Isolate 2</td><td><code>GCF_051549635.1</code></td><td>K. pneumoniae ASM5154963v1</td></tr>
+  </tbody>
+</table>
+
+<h3>🎯 Learning Objectives</h3>
+<ul>
+  <li>Install and configure AMR detection tools via <code>conda</code></li>
+  <li>Download and prepare <em>Klebsiella pneumoniae</em> genomes from NCBI</li>
+  <li>Execute AMR prediction using multiple tools</li>
+  <li>Interpret resistance gene detection results</li>
+  <li>Compare outputs across different databases</li>
+  <li>Understand quality metrics (coverage, identity)</li>
+</ul>
+
+<hr>
+
+<!-- ── Prerequisites ── -->
+<h2 id="prereqs">Prerequisites</h2>
+<ul>
+  <li><strong>conda</strong> installed (Miniconda or Anaconda). If not, follow the <a href="https://docs.conda.io/en/latest/miniconda.html" target="_blank">Miniconda guide</a>.</li>
+  <li><code>wget</code>, <code>unzip</code>, <code>awk</code>, <code>tree</code> available on your system.</li>
+  <li>At least <strong>4 GB free disk space</strong> for databases.</li>
+</ul>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     PART 1 — ENVIRONMENT SETUP
+═════════════════════════════════════════════ -->
+<h2 id="part1">🔧 Part 1: Environment Setup</h2>
+
+<div class="collapsible open" id="col-sys">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-sys')">
+    <span class="collapsible-title">1.1 Check system information <span class="collapsible-meta">— verify your environment before starting</span></span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo "=== System Information ==="
+uname -a
+
+echo "=== CPU Information ==="
+lscpu | grep -E 'Model name|CPU\(s\)'
+
+echo "=== Memory Information ==="
+free -h
+
+echo "=== Disk Space ==="
+df -h ~</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">System info checked</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-conda">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-conda')">
+    <span class="collapsible-title">1.2 Install &amp; configure Conda <span class="collapsible-meta">— skip if already installed</span></span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code># Download Miniconda installer
+wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+
+# Install silently
+bash miniconda.sh -b -p ~/miniconda
+rm miniconda.sh
+
+# Add conda to PATH
+export PATH="$HOME/miniconda/bin:$PATH"
+echo 'export PATH="$HOME/miniconda/bin:$PATH"' >> ~/.bashrc
+
+# Restart shell or source the profile
+source ~/.bashrc
+
+# Configure bioinformatics channels
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+
+echo "Conda ready:"
+conda --version</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Miniconda installed</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Bioconda channels configured</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-dirs">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-dirs')">
+    <span class="collapsible-title">1.3 Create working directories</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>mkdir -p ~/amr_analysis/genomes
+mkdir -p ~/amr_analysis/results/amrfinder
+mkdir -p ~/amr_analysis/results/rgi
+mkdir -p ~/amr_analysis/results/abricate
+mkdir -p ~/amr_analysis/comparison
+
+cd ~/amr_analysis
+
+echo "Directory structure:"
+tree -L 2 ~/amr_analysis 2>/dev/null || find ~/amr_analysis -type d</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Working directories created</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     PART 2 — DOWNLOAD GENOMES
+═════════════════════════════════════════════ -->
+<h2 id="part2">📥 Part 2: Download Sample Genomes</h2>
+
+<div class="collapsible" id="col-dl">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-dl')">
+    <span class="collapsible-title">2.1 Download both K. pneumoniae genomes from NCBI</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>DOWNLOAD_DIR="$HOME/amr_analysis/genomes"
+
+echo "Downloading K. pneumoniae genomes from NCBI..."
+
+# Isolate 1: K. pneumoniae MVS2
+echo "Downloading Isolate 1: K. pneumoniae MVS2 (GCF_051414815.1)..."
+wget -q --show-progress -P "$DOWNLOAD_DIR" \
+  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/051/414/815/GCF_051414815.1_KpMVS2/GCF_051414815.1_KpMVS2_genomic.fna.gz
+
+# Isolate 2: K. pneumoniae ASM5154963v1
+echo "Downloading Isolate 2: K. pneumoniae ASM5154963v1 (GCF_051549635.1)..."
+wget -q --show-progress -P "$DOWNLOAD_DIR" \
+  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/051/549/635/GCF_051549635.1_ASM5154963v1/GCF_051549635.1_ASM5154963v1_genomic.fna.gz
+
+echo "Decompressing..."
+gunzip "$DOWNLOAD_DIR"/*.gz
+
+echo "Download complete! Files:"
+ls -lh "$DOWNLOAD_DIR"/*.fna</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Isolate 1 (MVS2) downloaded &amp; decompressed</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Isolate 2 (ASM5154963v1) downloaded &amp; decompressed</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-inspect-genomes">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-inspect-genomes')">
+    <span class="collapsible-title">2.2 Inspect genome statistics</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo "=== Genome Statistics ==="
+
+echo "K. pneumoniae MVS2:"
+grep -c ">" ~/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna \
+  | xargs -I {} echo "  Contigs: {}"
+grep -v ">" ~/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna \
+  | wc -c | awk '{print "  Genome size: ~" int($1/1000000) " Mb"}'
+
+echo "K. pneumoniae ASM5154963v1:"
+grep -c ">" ~/amr_analysis/genomes/GCF_051549635.1_ASM5154963v1_genomic.fna \
+  | xargs -I {} echo "  Contigs: {}"
+grep -v ">" ~/amr_analysis/genomes/GCF_051549635.1_ASM5154963v1_genomic.fna \
+  | wc -c | awk '{print "  Genome size: ~" int($1/1000000) " Mb"}'
+
+echo "First 3 lines of MVS2 FASTA:"
+head -n 3 ~/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Genome stats inspected</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     EXERCISE 1 — AMRFINDERPLUS
+═════════════════════════════════════════════ -->
+<h2 id="ex1">🧪 Exercise 1: AMRFinderPlus Analysis</h2>
+<p><strong>AMRFinderPlus</strong> is NCBI's flagship tool. It identifies acquired resistance genes, point mutations in chromosomal targets, virulence factors, and stress response genes.</p>
+
+<div class="collapsible" id="col-amr-install">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-amr-install')">
+    <span class="collapsible-title">1.1 Install AMRFinderPlus</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>conda create -n amr -y
+conda install -n amr -y -c bioconda ncbi-amrfinderplus
+
+echo "AMRFinderPlus installed:"
+conda run -n amr amrfinder --version</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">AMRFinderPlus installed in <code>amr</code> environment</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-amr-db">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-amr-db')">
+    <span class="collapsible-title">1.2 Update the AMRFinderPlus database <span class="collapsible-meta">— critical step</span></span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <span>Always update the database before running analyses to capture the latest resistance mechanisms. This may take 2–3 minutes.</span>
+    </div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo "Updating AMRFinderPlus database..."
+conda run -n amr amrfinder --update
+
+echo "Database update complete!"
+conda run -n amr amrfinder --database_version 2>/dev/null || echo "Database ready"</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">AMRFinderPlus database updated</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-amr-run">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-amr-run')">
+    <span class="collapsible-title">1.3 Run AMRFinderPlus on both isolates</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <h4>Isolate 1 — K. pneumoniae MVS2</h4>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>conda run -n amr amrfinder \
+  -n ~/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna \
+  --organism Klebsiella_pneumoniae \
+  --plus \
+  --output ~/amr_analysis/results/amrfinder/kp_mvs2_amr.tsv
+
+wc -l < ~/amr_analysis/results/amrfinder/kp_mvs2_amr.tsv \
+  | awk '{print $1-1 " resistance determinants found"}'</code></pre>
+    </div>
+    <h4>Isolate 2 — K. pneumoniae ASM5154963v1</h4>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>conda run -n amr amrfinder \
+  -n ~/amr_analysis/genomes/GCF_051549635.1_ASM5154963v1_genomic.fna \
+  --organism Klebsiella_pneumoniae \
+  --plus \
+  --output ~/amr_analysis/results/amrfinder/kp_asm_amr.tsv
+
+wc -l < ~/amr_analysis/results/amrfinder/kp_asm_amr.tsv \
+  | awk '{print $1-1 " resistance determinants found"}'</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">AMRFinderPlus run on Isolate 1 (MVS2)</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">AMRFinderPlus run on Isolate 2 (ASM5154963v1)</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-amr-inspect">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-amr-inspect')">
+    <span class="collapsible-title">1.4 Inspect AMRFinderPlus results</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo "Preview of AMRFinderPlus results (MVS2):"
+head -n 5 ~/amr_analysis/results/amrfinder/kp_mvs2_amr.tsv
+
+echo ""
+echo "Drug Classes detected:"
+awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Class") col=i}
+            NR>1 && col{print $col}' \
+  ~/amr_analysis/results/amrfinder/kp_mvs2_amr.tsv \
+  | sort | uniq -c | sort -rn</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">AMRFinderPlus results reviewed</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     EXERCISE 2 — CARD RGI
+═════════════════════════════════════════════ -->
+<h2 id="ex2">🧪 Exercise 2: CARD RGI Analysis</h2>
+<p><strong>RGI</strong> uses the CARD database with three detection modes:</p>
+<table>
+  <thead><tr><th>Mode</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Perfect</strong></td><td>100% identity to reference</td></tr>
+    <tr><td><strong>Strict</strong></td><td>High similarity (&gt;95% identity)</td></tr>
+    <tr><td><strong>Loose</strong></td><td>Divergent homologs — requires validation</td></tr>
+  </tbody>
+</table>
+
+<div class="collapsible" id="col-rgi-install">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-rgi-install')">
+    <span class="collapsible-title">2.1 Install RGI</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>conda create -n tool -y
+conda install -n tool -y -c bioconda rgi
+
+echo "RGI installed:"
+MPLBACKEND=Agg conda run -n tool rgi main --version</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">RGI installed in <code>tool</code> environment</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-rgi-run">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-rgi-run')">
+    <span class="collapsible-title">2.2 Run RGI on both isolates</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <h4>Isolate 1 — K. pneumoniae MVS2</h4>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>MPLBACKEND=Agg conda run -n tool rgi main \
+  --input_sequence ~/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna \
+  --output_file ~/amr_analysis/results/rgi/kp_mvs2_rgi \
+  --input_type contig \
+  --clean
+
+wc -l < ~/amr_analysis/results/rgi/kp_mvs2_rgi.txt \
+  | awk '{print $1-1 " genes found"}'</code></pre>
+    </div>
+    <h4>Isolate 2 — K. pneumoniae ASM5154963v1</h4>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>MPLBACKEND=Agg conda run -n tool rgi main \
+  --input_sequence ~/amr_analysis/genomes/GCF_051549635.1_ASM5154963v1_genomic.fna \
+  --output_file ~/amr_analysis/results/rgi/kp_asm_rgi \
+  --input_type contig \
+  --clean
+
+wc -l < ~/amr_analysis/results/rgi/kp_asm_rgi.txt \
+  | awk '{print $1-1 " genes found"}'</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">RGI run on Isolate 1 (MVS2)</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">RGI run on Isolate 2 (ASM5154963v1)</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-rgi-inspect">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-rgi-inspect')">
+    <span class="collapsible-title">2.3 Inspect RGI results</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>head -n 5 ~/amr_analysis/results/rgi/kp_mvs2_rgi.txt
+
+echo "Detection stringency (Perfect / Strict / Loose):"
+awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Cut_Off") col=i}
+            NR>1 && col{print $col}' \
+  ~/amr_analysis/results/rgi/kp_mvs2_rgi.txt \
+  | sort | uniq -c | sort -rn
+
+echo "Perfect = 100% identity | Strict = >95% | Loose = Divergent"</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">RGI results reviewed</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     EXERCISE 3 — ABRICATE
+═════════════════════════════════════════════ -->
+<h2 id="ex3">🧪 Exercise 3: ABRicate Multi-Database Screening</h2>
+<p><strong>ABRicate</strong> screens genomes against multiple databases in a single command.</p>
+<table>
+  <thead><tr><th>Database</th><th>Contents</th></tr></thead>
+  <tbody>
+    <tr><td><code>card</code></td><td>CARD resistance genes</td></tr>
+    <tr><td><code>resfinder</code></td><td>ResFinder resistance genes</td></tr>
+    <tr><td><code>argannot</code></td><td>ARG-ANNOT annotations</td></tr>
+    <tr><td><code>ncbi</code></td><td>NCBI AMR reference genes</td></tr>
+    <tr><td><code>megares</code></td><td>MEGARes resistance database</td></tr>
+    <tr><td><code>vfdb</code></td><td>Virulence Factor Database</td></tr>
+  </tbody>
+</table>
+
+<div class="collapsible" id="col-abr-install">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-abr-install')">
+    <span class="collapsible-title">3.1 Install ABRicate &amp; set up databases</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>conda install -y -c bioconda abricate
+
+echo "ABRicate installed:"
+abricate --version
+
+echo "Setting up databases..."
+abricate --setupdb
+
+echo "Available databases:"
+abricate --list</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate installed</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">All databases set up</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-abr-run">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-abr-run')">
+    <span class="collapsible-title">3.2 Run ABRicate against all databases</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <span>This runs CARD, ResFinder, ARG-ANNOT, and VFDB in sequence on Isolate 1 (MVS2).</span>
+    </div>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>GENOME="$HOME/amr_analysis/genomes/GCF_051414815.1_KpMVS2_genomic.fna"
+OUTDIR="$HOME/amr_analysis/results/abricate"
+
+abricate --db card      "$GENOME" > "$OUTDIR/mvs2_card.tab"
+echo "CARD:      $(( $(wc -l < "$OUTDIR/mvs2_card.tab") - 1 )) genes"
+
+abricate --db resfinder "$GENOME" > "$OUTDIR/mvs2_resfinder.tab"
+echo "ResFinder: $(( $(wc -l < "$OUTDIR/mvs2_resfinder.tab") - 1 )) genes"
+
+abricate --db argannot  "$GENOME" > "$OUTDIR/mvs2_argannot.tab"
+echo "ARG-ANNOT: $(( $(wc -l < "$OUTDIR/mvs2_argannot.tab") - 1 )) genes"
+
+abricate --db vfdb      "$GENOME" > "$OUTDIR/mvs2_vfdb.tab"
+echo "VFDB:      $(( $(wc -l < "$OUTDIR/mvs2_vfdb.tab") - 1 )) virulence factors"
+
+echo "All ABRicate analyses complete!"</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate (CARD) complete</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate (ResFinder) complete</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate (ARG-ANNOT) complete</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate (VFDB) complete</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-abr-inspect">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-abr-inspect')">
+    <span class="collapsible-title">3.3 Inspect ABRicate results</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>echo "CARD results (GENE / %COVERAGE / %IDENTITY):"
+cut -f6,9,10 ~/amr_analysis/results/abricate/mvs2_card.tab | column -t | head -20
+
+echo ""
+echo "Database comparison:"
+echo "  CARD:      $(( $(wc -l < ~/amr_analysis/results/abricate/mvs2_card.tab) - 1 )) genes"
+echo "  ResFinder: $(( $(wc -l < ~/amr_analysis/results/abricate/mvs2_resfinder.tab) - 1 )) genes"
+echo "  ARG-ANNOT: $(( $(wc -l < ~/amr_analysis/results/abricate/mvs2_argannot.tab) - 1 )) genes"</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">ABRicate results reviewed</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     EXERCISE 4 — COMPARATIVE ANALYSIS
+═════════════════════════════════════════════ -->
+<h2 id="ex4">📊 Exercise 4: Comparative Analysis</h2>
+<p>Use the Python script below to compare results across all tools, compute consensus genes, and generate visualizations.</p>
+
+<div class="collapsible" id="col-compare-deps">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-compare-deps')">
+    <span class="collapsible-title">4.1 Install Python dependencies</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>pip install pandas matplotlib seaborn openpyxl</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Python dependencies installed</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-compare-run">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-compare-run')">
+    <span class="collapsible-title">4.2 Run the comparison script</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <p>Save the script below as <code>~/amr_analysis/compare_results.py</code>, then run:</p>
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>cd ~/amr_analysis
+python compare_results.py</code></pre>
+    </div>
+    <details style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:600;font-size:14px;color:var(--link)">📄 compare_results.py — click to expand</summary>
+      <div class="code-wrap" style="margin-top:8px">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from collections import Counter
+
+# ── Load Results ──────────────────────────────────────────
+df_mvs2      = pd.read_csv('results/amrfinder/kp_mvs2_amr.tsv', sep='\t')
+df_rgi       = pd.read_csv('results/rgi/kp_mvs2_rgi.txt', sep='\t')
+df_card_abr  = pd.read_csv('results/abricate/mvs2_card.tab', sep='\t')
+df_resfinder = pd.read_csv('results/abricate/mvs2_resfinder.tab', sep='\t')
+
+# ── Gene Sets ─────────────────────────────────────────────
+amrfinder_genes  = set(df_mvs2['Element symbol'].str.lower().str.strip())
+rgi_genes        = set(df_rgi['Best_Hit_ARO'].str.lower().str.strip())
+card_abr_genes   = set(df_card_abr['GENE'].str.lower().str.strip())
+resfinder_genes  = set(df_resfinder['GENE'].str.lower().str.strip())
+all_genes        = amrfinder_genes | rgi_genes | card_abr_genes | resfinder_genes
+
+print("=" * 60)
+print("Cross-Tool Comparison -- K. pneumoniae MVS2")
+print("=" * 60)
+print(f"  AMRFinderPlus : {len(amrfinder_genes)} genes")
+print(f"  CARD RGI      : {len(rgi_genes)} genes")
+print(f"  ABRicate-CARD : {len(card_abr_genes)} genes")
+print(f"  ResFinder     : {len(resfinder_genes)} genes")
+print(f"  Total unique  : {len(all_genes)} genes")
+
+# Consensus genes (detected by 3+ tools)
+gene_counts = Counter({
+    g: sum([g in amrfinder_genes, g in rgi_genes,
+            g in card_abr_genes, g in resfinder_genes])
+    for g in all_genes
+})
+consensus_genes = [g for g, c in gene_counts.items() if c >= 3]
+print(f"\nHigh-confidence genes (3+ tools): {len(consensus_genes)}")
+for gene in sorted(consensus_genes):
+    print(f"  - {gene}")
+
+# ── Quality Metrics ───────────────────────────────────────
+id_col  = '% Identity to reference sequence'
+cov_col = '% Coverage of reference sequence'
+if id_col in df_mvs2.columns:
+    print(f"\nAvg Identity : {df_mvs2[id_col].mean():.2f}%")
+    print(f"Avg Coverage : {df_mvs2[cov_col].mean():.2f}%")
+
+# ── Plots ─────────────────────────────────────────────────
+sns.set_style("whitegrid")
+
+if 'Class' in df_mvs2.columns:
+    fig, ax = plt.subplots(figsize=(12, 6))
+    df_mvs2['Class'].value_counts().plot(kind='barh', ax=ax, color='steelblue')
+    ax.set_title('AMR Genes by Drug Class (K. pneumoniae MVS2)', fontsize=14)
+    plt.tight_layout()
+    plt.savefig('comparison/drug_classes.png', dpi=300)
+
+if id_col in df_mvs2.columns:
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sc = ax.scatter(df_mvs2[cov_col], df_mvs2[id_col],
+                    c=df_mvs2[id_col], cmap='RdYlGn', s=100, alpha=0.6)
+    ax.axhline(90, color='red', linestyle='--', alpha=0.5, label='90% ID threshold')
+    ax.axvline(80, color='blue', linestyle='--', alpha=0.5, label='80% Cov threshold')
+    ax.set_title('AMR Gene Detection Quality Metrics', fontsize=14)
+    ax.legend()
+    plt.colorbar(sc, ax=ax, label='Identity (%)')
+    plt.tight_layout()
+    plt.savefig('comparison/quality_metrics.png', dpi=300)
+
+# ── Excel Export ──────────────────────────────────────────
+with pd.ExcelWriter('comparison/AMR_Results_Comparison.xlsx', engine='openpyxl') as writer:
+    df_mvs2.to_excel(writer, sheet_name='AMRFinderPlus', index=False)
+    df_rgi.to_excel(writer, sheet_name='CARD_RGI', index=False)
+    df_card_abr.to_excel(writer, sheet_name='ABRicate_CARD', index=False)
+    df_resfinder.to_excel(writer, sheet_name='ABRicate_ResFinder', index=False)
+
+print("\nSaved: comparison/AMR_Results_Comparison.xlsx")
+print("Saved: comparison/drug_classes.png")
+print("Saved: comparison/quality_metrics.png")</code></pre>
+      </div>
+    </details>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">compare_results.py saved and run</span>
+      </label>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Plots and Excel file generated</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     EXPORT
+═════════════════════════════════════════════ -->
+<h2 id="export">💾 Export Results</h2>
+
+<div class="collapsible" id="col-export">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-export')">
+    <span class="collapsible-title">Archive all results</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code>cd ~
+zip -r AMR_Analysis_Results.zip amr_analysis/ -q
+
+echo "Archive created: AMR_Analysis_Results.zip"
+echo "Contents:"
+unzip -l AMR_Analysis_Results.zip | head -30</code></pre>
+    </div>
+    <div class="step-group">
+      <div class="step-group-title">Mark as done</div>
+      <label class="checklist-item" onclick="toggleCheck(this)">
+        <input type="checkbox"> <span class="check-label">Results archived</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     DISCUSSION
+═════════════════════════════════════════════ -->
+<h2 id="discussion">💭 Discussion Questions</h2>
+<ol>
+  <li><strong>Which resistance genes were consistently detected across all tools?</strong><br><span style="color:var(--text-muted);font-size:14px">What does this tell you about database concordance?</span></li>
+  <li><strong>Were there any database-specific calls?</strong><br><span style="color:var(--text-muted);font-size:14px">How would you investigate discrepancies? Which database would you trust more for clinical reporting?</span></li>
+  <li><strong>Quality Metrics:</strong><br><span style="color:var(--text-muted);font-size:14px">How many genes had ≥90% identity and ≥80% coverage? What would you do with low-confidence hits?</span></li>
+  <li><strong>What major antibiotic classes show resistance?</strong><br><span style="color:var(--text-muted);font-size:14px">β-lactams, aminoglycosides, fluoroquinolones — what are the clinical implications?</span></li>
+  <li><strong>If this were a clinical sample, what treatment options might remain?</strong></li>
+  <li><strong>Tool selection:</strong><br><span style="color:var(--text-muted);font-size:14px">For routine surveillance vs research — would your tool choice differ? What are the trade-offs?</span></li>
+</ol>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     ADDITIONAL EXERCISES
+═════════════════════════════════════════════ -->
+<h2 id="extras">🎓 Additional Exercises (Optional)</h2>
+
+<div class="collapsible" id="col-extra1">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-extra1')">
+    <span class="collapsible-title">Challenge 1 — Analyze the second sample</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <p>Repeat the full pipeline for <code>GCF_051549635.1_ASM5154963v1</code> and compare findings with MVS2.</p>
+  </div>
+</div>
+
+<div class="collapsible" id="col-extra2">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-extra2')">
+    <span class="collapsible-title">Challenge 2 — Virulence factor analysis</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <div class="code-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><code># View VFDB results
+cat ~/amr_analysis/results/abricate/mvs2_vfdb.tab | column -t | head -20</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="collapsible" id="col-extra3">
+  <button class="collapsible-header" onclick="toggleCollapsible('col-extra3')">
+    <span class="collapsible-title">Challenge 3 — Custom visualizations</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor"><path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"/></svg>
+  </button>
+  <div class="collapsible-body">
+    <p>Ideas to try in Python:</p>
+    <ul>
+      <li>Venn diagram showing gene overlap between tools</li>
+      <li>Heatmap of resistance genes × samples</li>
+      <li>Network analysis of co-occurring resistance genes</li>
+    </ul>
+  </div>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     BEST PRACTICES
+═════════════════════════════════════════════ -->
+<h2 id="bestpractices">✅ Best Practices Summary</h2>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+  <div>
+    <h3 style="color:var(--green)">DO ✓</h3>
+    <ul style="font-size:14px">
+      <li>Always update databases before analysis</li>
+      <li>Use multiple tools for cross-validation</li>
+      <li>Set quality thresholds (≥90% ID, ≥80% coverage)</li>
+      <li>Correlate with phenotypic AST when available</li>
+      <li>Document software versions and database dates</li>
+      <li>Consider local epidemiology when interpreting</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="color:var(--red)">DON'T ✗</h3>
+    <ul style="font-size:14px">
+      <li>Trust low-confidence predictions without validation</li>
+      <li>Rely on a single tool or database</li>
+      <li>Ignore partial gene matches without investigation</li>
+      <li>Make clinical decisions on genomics alone</li>
+      <li>Forget to check for novel or divergent variants</li>
+    </ul>
+  </div>
+</div>
+
+<table>
+  <thead><tr><th>Principle</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Database Currency</strong></td><td>Regular updates capture new resistance mechanisms</td></tr>
+    <tr><td><strong>Cross-Validation</strong></td><td>Multiple tools reduce false positives/negatives</td></tr>
+    <tr><td><strong>Quality Control</strong></td><td>Coverage and identity metrics indicate confidence</td></tr>
+    <tr><td><strong>Clinical Context</strong></td><td>Interpret findings within epidemiological framework</td></tr>
+    <tr><td><strong>Reproducibility</strong></td><td>Document everything for traceable analyses</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ════════════════════════════════════════════
+     RESOURCES
+═════════════════════════════════════════════ -->
+<h2 id="resources">📚 Additional Resources</h2>
+
+<h3>Databases</h3>
+<ul>
+  <li><a href="https://card.mcmaster.ca" target="_blank">CARD</a></li>
+  <li><a href="https://www.ncbi.nlm.nih.gov/pathogens/antimicrobial-resistance/" target="_blank">NCBI AMRFinderPlus</a></li>
+  <li><a href="https://cge.food.dtu.dk/services/ResFinder/" target="_blank">ResFinder</a></li>
+  <li><a href="http://www.mgc.ac.cn/VFs/" target="_blank">VFDB</a></li>
+</ul>
+
+<h3>Tool Documentation</h3>
+<ul>
+  <li><a href="https://github.com/ncbi/amr/wiki" target="_blank">AMRFinderPlus Wiki</a></li>
+  <li><a href="https://github.com/arpcard/rgi" target="_blank">CARD RGI</a></li>
+  <li><a href="https://github.com/tseemann/abricate" target="_blank">ABRicate</a></li>
+</ul>
+
+<h3>Web Tools</h3>
+<ul>
+  <li><a href="https://pathogen.watch" target="_blank">PathogenWatch</a></li>
+  <li><a href="https://www.bv-brc.org" target="_blank">BV-BRC</a></li>
+  <li><a href="https://bioinfo.icgeb.res.in/virulent2/" target="_blank">Virulent2</a></li>
+</ul>
+
+<h3>Key Publications</h3>
+<ul>
+  <li>CARD 2023: Alcock et al., <em>Nucleic Acids Res.</em> 2023</li>
+  <li>AMRFinderPlus: Feldgarden et al., <em>Antimicrob. Agents Chemother.</em> 2021</li>
+  <li>ResFinder 4.0: Bortolaia et al., <em>J. Antimicrob. Chemother.</em> 2020</li>
+</ul>
+
+<hr>
+<p style="font-size:13px;color:var(--text-muted);text-align:center;margin-top:24px">
+  Workshop material: Hands-on Session on Antimicrobial Resistance: Genomic Perspective<br>
+  February 6, 2026 · Instructor: Anwesha
+</p>
+
+<script>
+  function toggleCollapsible(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function toggleCheck(label) {
+    const cb = label.querySelector('input[type="checkbox"]');
+    // toggled by the label click natively, so just update class + progress
+    setTimeout(() => {
+      label.classList.toggle('checked', cb.checked);
+      updateProgress();
+      saveProgress();
+    }, 0);
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+    const done = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked');
+    const pct = all.length ? Math.round((done.length / all.length) * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-label').textContent = done.length + ' / ' + all.length + ' steps';
+  }
+
+  function saveProgress() {
+    const state = {};
+    document.querySelectorAll('.checklist-item').forEach((item, i) => {
+      state[i] = item.querySelector('input').checked;
+    });
+    try { localStorage.setItem('amr-progress', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadProgress() {
+    try {
+      const state = JSON.parse(localStorage.getItem('amr-progress') || '{}');
+      document.querySelectorAll('.checklist-item').forEach((item, i) => {
+        if (state[i]) {
+          item.querySelector('input').checked = true;
+          item.classList.add('checked');
+        }
+      });
+    } catch(e) {}
+    updateProgress();
+  }
+
+  function resetProgress() {
+    document.querySelectorAll('.checklist-item').forEach(item => {
+      item.querySelector('input').checked = false;
+      item.classList.remove('checked');
+    });
+    try { localStorage.removeItem('amr-progress'); } catch(e) {}
+    updateProgress();
+  }
+
+  loadProgress();
+</script>
+</body>
+</html>
