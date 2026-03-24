@@ -165,10 +165,10 @@ The reference genome is the "gold standard" sequence that your reads will be com
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/858/895/GCF_009858895.2_ASM985889v3/GCF_009858895.2_ASM985889v3_genomic.fna.gz
 
 # Decompress it
-gunzip GCF_009858895.2_ASM985889v3/GCF_009858895.2_ASM985889v3_genomic.fna.gz
+gunzip GCF_*
 
 # Rename it to something simpler to type
-mv GCF_009858895.2_ASM985889v3/GCF_009858895.2_ASM985889v3_genomic.fna ref.fa
+mv GCF_* ref.fa
 ```
 
 ### Paired-End Reads
